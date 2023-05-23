@@ -14,5 +14,4 @@ def varimax(Phi, gamma = 1.0, q = 20, tol = 1e-6):
         R = dot(u,vh)
         d = sum(s)
         if d_old!=0 and d/d_old < 1 + tol: break
-        print(R.shape)
     return dot(Phi, R)

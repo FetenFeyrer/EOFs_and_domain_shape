@@ -157,7 +157,7 @@ if __name__== '__main__':
     #plot_FlowTypes(sample_direct_MeridionalFlow, sample_direct_ZonalFlow, sample_direct_CyclonicFlow)
     pup.plot_PCA_loadings(cov_loadings_S_mode1, ' S-Mode Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
     pup.plot_PCA_loadings(rotated_cov_loadings_S_mode1, 'Varimax Rotated Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(cor_loadings_S_mode1, 'S-Mode Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
+    pup.plot_PCA_loadings(cor_loadings_S_mode1, 'S-Mode Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise', 20)
 
     pup.plot_PCA_loadings(cov_scores_T_mode1, ' T-Mode Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
     pup.plot_PCA_loadings(cor_scores_T_mode1, 'T-Mode Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
