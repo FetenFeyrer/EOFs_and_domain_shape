@@ -2,7 +2,7 @@ from scipy import eye, asarray, dot, sum, diag
 from scipy.linalg import svd
 
 
-def varimax(Phi, gamma = 1.0, q = 20, tol = 1e-6):
+def varimax(Phi, gamma = 10.0, q = 200, tol = 1e-06):
     
     p,k = Phi.shape
     R = eye(k)

@@ -12,7 +12,8 @@ def compute_pca(data, n_components=36, correlation_mode=False):
     if correlation_mode:
         scaler = StandardScaler()
         data = scaler.fit_transform(data)
-
+    
+    
     
     # Perform PCA on the correlation matrix
     pca = PCA(n_components=n_components)

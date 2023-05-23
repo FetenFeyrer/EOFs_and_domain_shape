@@ -5,6 +5,7 @@ import reflect_by_x as refl
 import add_noise as ns
 import center_matrix as c
 import varimax_rotation as rot
+import FactorAnalyzerVarimax as rot_alt
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -148,27 +149,67 @@ if __name__== '__main__':
 
 
 
+    #print(cov_loadings_T_mode1.shape)
 
-    rotated_cov_loadings_S_mode1 = rot.varimax(cov_loadings_S_mode1)
+
+    # compute rotated loadings and scores for S- and T-Mode, respectively
+    rotated_cov_loadings_S_mode1 = rot.varimax(cov_loadings_S_mode1[:3].T)
+    rotated_cor_loadings_S_mode1 = rot.varimax(cor_loadings_S_mode1[:3].T)
+
+    rotated_cov_scores_T_mode1 = rot.varimax(cov_scores_T_mode1[:3].T)
+    rotated_cor_scores_T_mode1 = rot.varimax(cor_scores_T_mode1[:3].T)
+
+    # compute rotated loadings and scores for S- and T-Mode, respectively
+    rotated_cov_loadings_S_mode2 = rot.varimax(cov_loadings_S_mode2[:3].T)
+    rotated_cor_loadings_S_mode2 = rot.varimax(cor_loadings_S_mode2[:3].T)
+
+    rotated_cov_scores_T_mode2 = rot.varimax(cov_scores_T_mode2[:3].T)
+    rotated_cor_scores_T_mode2 = rot.varimax(cor_scores_T_mode2[:3].T)
+
     ##########################
     #          PLOT         #
     ##########################
 
     #plot_FlowTypes(sample_direct_MeridionalFlow, sample_direct_ZonalFlow, sample_direct_CyclonicFlow)
-    pup.plot_PCA_loadings(cov_loadings_S_mode1, ' S-Mode Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(rotated_cov_loadings_S_mode1, 'Varimax Rotated Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
+
+    ###### Plasmode 1 #######
+
+    # plot unrotated pc loadings in S-Mode for plasmode 1 
+    pup.plot_PCA_loadings(cov_loadings_S_mode1, 'S-Mode Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
     pup.plot_PCA_loadings(cor_loadings_S_mode1, 'S-Mode Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise', 20)
 
+    # plot varimax rotated pc loadings in S-Mode for plasmode 1
+    pup.plot_PCA_loadings(rotated_cov_loadings_S_mode1.T, 'S-Mode Varimax Rotated Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
+    pup.plot_PCA_loadings(rotated_cor_loadings_S_mode1.T, 'S-Mode Varimax Rotated Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise', 20)
+    
+    # plot unrotated pc scores in T-Mode for plasmode 1
     pup.plot_PCA_loadings(cov_scores_T_mode1, ' T-Mode Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
     pup.plot_PCA_loadings(cor_scores_T_mode1, 'T-Mode Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
 
+    # plot varimax rotated pc scores in T-Mode for plasmode 1
+    pup.plot_PCA_loadings(rotated_cov_scores_T_mode1.T, 'T-Mode Varimax Rotated Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
+    pup.plot_PCA_loadings(rotated_cor_scores_T_mode1.T, 'T-Mode Varimax Rotated Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
+
+
+    ###### Plasmode 2 #######
+
+    # plot unrotated pc loadings in S-Mode for plasmode 2
     pup.plot_PCA_loadings(cov_loadings_S_mode2, 'S-Mode Covariance PCA Plasmode 2 (Zonal-Meridional-Cyclonic) high noise')
     pup.plot_PCA_loadings(cor_loadings_S_mode2, 'S-Mode Correlation PCA Plasmode 2 (Zonal-Meridional-Cyclonic) high noise', 20)
 
+    # plot varimax rotated pc loadings in S-Mode for plasmode 2
+    pup.plot_PCA_loadings(rotated_cov_loadings_S_mode2.T, 'S-Mode Varimax Rotated Covariance PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise')
+    pup.plot_PCA_loadings(rotated_cor_loadings_S_mode2.T, 'S-Mode Varimax Rotated Correlation PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise', 20)
+
+    # plot unrotated pc scores in T-Mode for plasmode 2
     pup.plot_PCA_loadings(cov_scores_T_mode2, 'T-Mode Covariance PCA Plasmode 2 (Meridional-Zonal-Cyclonic) high noise')
     pup.plot_PCA_loadings(cor_scores_T_mode2, 'T-Mode Correlation PCA Plasmode 2 (Meridional-Zonal-Cyclonic) high noise')
 
+    # plot varimax rotated pc scores in T-Mode for plasmode 2
+    pup.plot_PCA_loadings(rotated_cov_scores_T_mode2.T, 'T-Mode Varimax Rotated Covariance PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise')
+    pup.plot_PCA_loadings(rotated_cor_scores_T_mode2.T, 'T-Mode Varimax Rotated Correlation PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise')
+
     pup.plot_PCA_loadings(cov_loadings_mode4, 'Covariance PCA Plasmode 4 (Zonal-Meridional-Cyclonic) high noise')
-    pup.plot_PCA_loadings(cor_loadings_mode4, 'Correlation PCA Plasmode 4 (Zonal-Meridional-Cyclonic) high noise', 20)
+    #pup.plot_PCA_loadings(cor_loadings_mode4, 'Correlation PCA Plasmode 4 (Zonal-Meridional-Cyclonic) high noise', 20)
 
   
