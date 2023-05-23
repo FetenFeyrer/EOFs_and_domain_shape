@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import plot_flows as p
+import plot_isoLines as p
 
 def plot_PCA_loadings(loadings, title, levels=6):
     

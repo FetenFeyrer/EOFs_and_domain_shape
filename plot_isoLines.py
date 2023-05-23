@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 # Input: 6x6 data matrix (np.array), the position in the subplot, and a subplot title
 def plot_isoLines(dataset, ax, levels, title):
+    
     # reshape input sample dataset to 6x6 matrix
     dataset = dataset.reshape(6,6)
     # Create X and Y coordinates for the data points

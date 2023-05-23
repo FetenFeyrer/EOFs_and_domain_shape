@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 # input: a data set (n x 36(=p)), (number of components computed))
 #
 # returns: PC loadings (3x36)
-def compute_pca(data, n_components=3, correlation_mode=False):
+def compute_pca(data, n_components=36, correlation_mode=False):
     
     
     if correlation_mode:
@@ -23,8 +23,7 @@ def compute_pca(data, n_components=3, correlation_mode=False):
 
     loadings = pca.components_
     
-    print(loadings)
-    print(pc_scores.T)
+    #print(loadings.shape)
     
 
-    return loadings
+    return loadings, pc_scores.T
