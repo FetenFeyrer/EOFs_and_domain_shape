@@ -21,10 +21,10 @@ def compute_pca(data, n_components=36, correlation_mode=False):
     
     pc_scores = pca.transform(data)
 
-
+    explained_variances = pca.explained_variance_ratio_
     loadings = pca.components_
     
     #print(loadings.shape)
     
 
-    return loadings, pc_scores.T
+    return loadings, pc_scores.T, explained_variances

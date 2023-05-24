@@ -1,6 +1,6 @@
-import plot_isoLines as p
+
 import compute_pca as pca
-import plot_unrot_pc as pup
+import plot_pc as pup
 import reflect_by_x as refl
 import add_noise as ns
 import center_matrix as c
@@ -10,7 +10,44 @@ import FactorAnalyzerVarimax as rot_alt
 import numpy as np
 import matplotlib.pyplot as plt
 
+def main(data_matrix, title, noise_level):
+    data_matrix_T = data_matrix.T
 
+    data_matrix = ns.add_gaussian_noise(data_matrix, 0, noise_level)
+    data_matrix = c.center_matrix(data_matrix)
+
+    data_matrix_T = ns.add_gaussian_noise(data_matrix_T, 0, noise_level)
+    data_matrix_T = c.center_matrix(data_matrix_T)
+
+    cov_loadings_S, cov_scores_S, cov_exp_var_S = pca.compute_pca(data_matrix)
+    cor_loadings_S, cor_scores_S, cor_exp_var_S = pca.compute_pca(data_matrix, correlation_mode=True)
+
+    cov_loadings_T, cov_scores_T, cov_exp_var_T = pca.compute_pca(data_matrix_T)
+    cor_loadings_T, cor_scores_T, cor_exp_var_T = pca.compute_pca(data_matrix_T, correlation_mode=True)
+
+    rotated_cov_loadings_S = rot.varimax(cov_loadings_S[:3].T)
+    rotated_cor_loadings_S = rot.varimax(cor_loadings_S[:3].T)
+
+    rotated_cov_scores_T = rot.varimax(cov_scores_T[:3].T)
+    rotated_cor_scores_T = rot.varimax(cor_scores_T[:3].T)
+
+    a, b, rot_cov_exp_var_S = pca.compute_pca(rotated_cov_loadings_S, 3)
+    a, b, rot_cor_exp_var_S = pca.compute_pca(rotated_cor_loadings_S, 3, True)
+
+    a, b, rot_cov_exp_var_T = pca.compute_pca(rotated_cov_scores_T, 3)
+    a, b, rot_cor_exp_var_T = pca.compute_pca(rotated_cor_scores_T, 3, True)
+
+    pup.plot_PCA_loadings(cov_loadings_S, cov_exp_var_S, 'S-Mode Covariance PCA ' + str(title) + ' noise-level: ' + str(noise_level))
+    pup.plot_PCA_loadings(rotated_cov_loadings_S.T, rot_cov_exp_var_S, 'S-Mode Covariance rotated PCA ' + str(title) + ' noise-level: ' + str(noise_level))
+
+    pup.plot_PCA_loadings(cor_loadings_S, cor_exp_var_S, 'S-Mode Correlation PCA ' + str(title) + ' noise-level: ' + str(noise_level), 20)
+    pup.plot_PCA_loadings(rotated_cor_loadings_S.T, rot_cor_exp_var_S, 'S-Mode Correlation rotated PCA ' + str(title) + ' noise-level: ' + str(noise_level), 20)
+
+    pup.plot_PCA_loadings(cov_scores_T, cov_exp_var_T, 'T-Mode Covariance PCA ' + str(title) + ' noise-level: ' + str(noise_level))
+    pup.plot_PCA_loadings(rotated_cov_scores_T.T, rot_cov_exp_var_T, 'T-Mode Covariance rotated PCA ' + str(title) + ' noise-level: ' + str(noise_level))
+
+    pup.plot_PCA_loadings(cor_scores_T, cor_exp_var_T, 'T-Mode Correlation PCA ' + str(title) + ' noise-level: ' + str(noise_level), 20)
+    pup.plot_PCA_loadings(rotated_cor_scores_T.T, rot_cor_exp_var_T, 'T-Mode Correlation rotated PCA ' + str(title) + ' noise-level: ' + str(noise_level))
 
 if __name__== '__main__':
     # Meridional Flow sample data
@@ -82,56 +119,22 @@ if __name__== '__main__':
     EEEEEE = np.tile(sample_direct_CyclonicFlow, (6,1))
     FFFFFF = np.tile(sample_inverse_CyclonicFlow, (6,1))
     
-    # input matrix in S and T modes
-    input_matrix_S_mode1 = np.vstack((AAAAAA,BBBBBB,CCCCCC,DDDDDD,EEEEEE,FFFFFF))
-    input_matrix_T_mode1 = input_matrix_S_mode1.T
+  
+    input_matrix_mode1 = np.vstack((AAAAAA,BBBBBB,CCCCCC,DDDDDD,EEEEEE,FFFFFF))
 
-
-    ###### S-Mode PCA calculation ########
-    input_matrix_S_mode1 = ns.add_gaussian_noise(input_matrix_S_mode1, 0, 1)
-    
-    input_matrix_S_mode1 = c.center_matrix(input_matrix_S_mode1)
-    cov_loadings_S_mode1, cov_scores_S_mode1 = pca.compute_pca(input_matrix_S_mode1)
-    cor_loadings_S_mode1, cor_scores_S_mode1 = pca.compute_pca(input_matrix_S_mode1, correlation_mode=True)
-
-    ###### T-Mode PCA calculation ########
-    input_matrix_T_mode1 = ns.add_gaussian_noise(input_matrix_T_mode1, 0, 1)
-    
-    input_matrix_T_mode1 = c.center_matrix(input_matrix_T_mode1)
-    cov_loadings_T_mode1, cov_scores_T_mode1 = pca.compute_pca(input_matrix_T_mode1)
-    cor_loadings_T_mode1, cor_scores_T_mode1 = pca.compute_pca(input_matrix_T_mode1, correlation_mode=True)
-
-    
     
     ####### PLASMODE 2 ########
-    
     
     GGGGGG = np.tile(sample_direct_ZonalFlow_flip, (6,1))
     HHHHHH = np.tile(sample_inverse_ZonalFlow_flip, (6,1))
     KKKKKK = np.tile(sample_direct_CyclonicFlow_flip, (6,1))
     LLLLLL = np.tile(sample_inverse_CyclonicFlow_flip, (6,1))
 
-    ####### S-Mode ########
-    input_matrix_S_mode2 = np.vstack((GGGGGG,HHHHHH,AAAAAA,BBBBBB,KKKKKK,LLLLLL))
-    input_matrix_T_mode2 = input_matrix_S_mode2.T
 
-    input_matrix_S_mode2 = ns.add_gaussian_noise(input_matrix_S_mode2, 0, 3)
-    
-    input_matrix_S_mode2 = c.center_matrix(input_matrix_S_mode2)
-    
-    cov_loadings_S_mode2, cov_scores_S_mode2 = pca.compute_pca(input_matrix_S_mode2)
-    cor_loadings_S_mode2, cor_scores_S_mode2 = pca.compute_pca(input_matrix_S_mode2, correlation_mode=True)
-
-
-    ####### T-Mode ########
-    input_matrix_T_mode2 = ns.add_gaussian_noise(input_matrix_T_mode2, 0, 3)
-    
-    input_matrix_T_mode2 = c.center_matrix(input_matrix_T_mode2)
-    cov_loadings_T_mode2, cov_scores_T_mode2 = pca.compute_pca(input_matrix_T_mode2)
-    cor_loadings_T_mode2, cor_scores_T_mode2 = pca.compute_pca(input_matrix_T_mode2, correlation_mode=True)
-
+    input_matrix_mode2 = np.vstack((GGGGGG,HHHHHH,AAAAAA,BBBBBB,KKKKKK,LLLLLL))
+   
     ####### PLASMODE 4 ########
-
+    
     GGGx10 = np.tile(sample_direct_ZonalFlow_flip, (10,1))
     HHHx10 = np.tile(sample_inverse_ZonalFlow_flip, (10,1))
     IIIx5 = np.tile(sample_direct_MeridionalFlow, (5,1))
@@ -141,75 +144,13 @@ if __name__== '__main__':
 
 
     input_matrix_mode4 = np.vstack((GGGx10,HHHx10,IIIx5,JJJx5,KKKx3,LLLx3))
-    input_matrix_mode4 = ns.add_gaussian_noise(input_matrix_mode4, 0, 3)
-
-    cov_loadings_mode4, cov_scores_mode4 = pca.compute_pca(input_matrix_mode4)
-    cor_loadings_mode4, cor_scores_mode4 = pca.compute_pca(input_matrix_mode4, correlation_mode=True)
-    #print(cov_loadings_S_mode1.shape)
-
-
-
-    #print(cov_loadings_T_mode1.shape)
-
-
-    # compute rotated loadings and scores for S- and T-Mode, respectively
-    rotated_cov_loadings_S_mode1 = rot.varimax(cov_loadings_S_mode1[:3].T)
-    rotated_cor_loadings_S_mode1 = rot.varimax(cor_loadings_S_mode1[:3].T)
-
-    rotated_cov_scores_T_mode1 = rot.varimax(cov_scores_T_mode1[:3].T)
-    rotated_cor_scores_T_mode1 = rot.varimax(cor_scores_T_mode1[:3].T)
-
-    # compute rotated loadings and scores for S- and T-Mode, respectively
-    rotated_cov_loadings_S_mode2 = rot.varimax(cov_loadings_S_mode2[:3].T)
-    rotated_cor_loadings_S_mode2 = rot.varimax(cor_loadings_S_mode2[:3].T)
-
-    rotated_cov_scores_T_mode2 = rot.varimax(cov_scores_T_mode2[:3].T)
-    rotated_cor_scores_T_mode2 = rot.varimax(cor_scores_T_mode2[:3].T)
-
+    
     ##########################
     #          PLOT         #
     ##########################
-
-    #plot_FlowTypes(sample_direct_MeridionalFlow, sample_direct_ZonalFlow, sample_direct_CyclonicFlow)
-
-    ###### Plasmode 1 #######
-
-    # plot unrotated pc loadings in S-Mode for plasmode 1 
-    pup.plot_PCA_loadings(cov_loadings_S_mode1, 'S-Mode Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(cor_loadings_S_mode1, 'S-Mode Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise', 20)
-
-    # plot varimax rotated pc loadings in S-Mode for plasmode 1
-    pup.plot_PCA_loadings(rotated_cov_loadings_S_mode1.T, 'S-Mode Varimax Rotated Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(rotated_cor_loadings_S_mode1.T, 'S-Mode Varimax Rotated Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise', 20)
     
-    # plot unrotated pc scores in T-Mode for plasmode 1
-    pup.plot_PCA_loadings(cov_scores_T_mode1, ' T-Mode Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(cor_scores_T_mode1, 'T-Mode Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-
-    # plot varimax rotated pc scores in T-Mode for plasmode 1
-    pup.plot_PCA_loadings(rotated_cov_scores_T_mode1.T, 'T-Mode Varimax Rotated Covariance PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(rotated_cor_scores_T_mode1.T, 'T-Mode Varimax Rotated Correlation PCA Plasmode 1 (Meridional-Zonal-Cyclonic) low noise')
-
-
-    ###### Plasmode 2 #######
-
-    # plot unrotated pc loadings in S-Mode for plasmode 2
-    pup.plot_PCA_loadings(cov_loadings_S_mode2, 'S-Mode Covariance PCA Plasmode 2 (Zonal-Meridional-Cyclonic) high noise')
-    pup.plot_PCA_loadings(cor_loadings_S_mode2, 'S-Mode Correlation PCA Plasmode 2 (Zonal-Meridional-Cyclonic) high noise', 20)
-
-    # plot varimax rotated pc loadings in S-Mode for plasmode 2
-    pup.plot_PCA_loadings(rotated_cov_loadings_S_mode2.T, 'S-Mode Varimax Rotated Covariance PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(rotated_cor_loadings_S_mode2.T, 'S-Mode Varimax Rotated Correlation PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise', 20)
-
-    # plot unrotated pc scores in T-Mode for plasmode 2
-    pup.plot_PCA_loadings(cov_scores_T_mode2, 'T-Mode Covariance PCA Plasmode 2 (Meridional-Zonal-Cyclonic) high noise')
-    pup.plot_PCA_loadings(cor_scores_T_mode2, 'T-Mode Correlation PCA Plasmode 2 (Meridional-Zonal-Cyclonic) high noise')
-
-    # plot varimax rotated pc scores in T-Mode for plasmode 2
-    pup.plot_PCA_loadings(rotated_cov_scores_T_mode2.T, 'T-Mode Varimax Rotated Covariance PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise')
-    pup.plot_PCA_loadings(rotated_cor_scores_T_mode2.T, 'T-Mode Varimax Rotated Correlation PCA Plasmode 2 (Meridional-Zonal-Cyclonic) low noise')
-
-    pup.plot_PCA_loadings(cov_loadings_mode4, 'Covariance PCA Plasmode 4 (Zonal-Meridional-Cyclonic) high noise')
-    #pup.plot_PCA_loadings(cor_loadings_mode4, 'Correlation PCA Plasmode 4 (Zonal-Meridional-Cyclonic) high noise', 20)
-
-  
+    #plot_FlowTypes(sample_direct_MeridionalFlow, sample_direct_ZonalFlow, sample_direct_CyclonicFlow)
+    
+    main(input_matrix_mode1, 'Plasmode 1', 1)
+    main(input_matrix_mode2, 'Plasmode 2', 3)
+    main(input_matrix_mode4, 'Plasmode 4', 1)

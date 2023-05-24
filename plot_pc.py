@@ -1,9 +1,12 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Input: 6x6 data matrix (np.array), the position in the subplot, and a subplot title
 def plot_isoLines(dataset, ax, levels, title):
-    
+
     # reshape input sample dataset to 6x6 matrix
     dataset = dataset.reshape(6,6)
     # Create X and Y coordinates for the data points
@@ -37,9 +40,31 @@ def plot_isoLines(dataset, ax, levels, title):
 
     # Remove ticks from the Axes
     ax.tick_params(axis='both', which='both', length=0)
-# Input: List of datasets to merge (same sized numpy matrices)
-# 
-# returns: a merged matrix of same size as input matrices with compoment wise means
-def merge_Datasets(list_of_datasets):
-    merged_Dataset = np.mean(list_of_datasets, axis=0)
-    return merged_Dataset
+
+
+def plot_PCA_loadings(loadings, variances, title, levels=6):
+    
+    # Create a figure and axes for the plots
+    fig, axs = plt.subplots(1, 3, figsize=(11, 3.5))
+    fig.suptitle(title)
+
+
+    loadings_matrix_pc1 = loadings[0]
+    loadings_matrix_pc2 = loadings[1]
+    loadings_matrix_pc3 = loadings[2]
+    #covariance_matrix = covariance.reshape(6,6)
+
+
+    # Plot the isolines for each flow dataset
+    #p.plot_isoLines(covariance, axs[0], 'Covariance Matrix')
+    plot_isoLines(loadings_matrix_pc1, axs[0], levels,  'PC1, explained variance: ' + str(round(variances[0]*100, 2)))
+    plot_isoLines(loadings_matrix_pc2, axs[1], levels,  'PC2, explained variance: ' + str(round(variances[1]*100, 2)))
+    plot_isoLines(loadings_matrix_pc3, axs[2], levels, 'PC3, explained variance: ' + str(round(variances[2]*100, 2)))
+    #p.plot_isoLines(covariance, axs[4], 'Covariance matrix')
+
+    plt.subplots_adjust(hspace=0.4, wspace=0.4)
+
+    #plt.title('Isolines of Flow Data')
+    plt.tight_layout()
+
+    plt.show()
