@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
-import numpy as np
-import matplotlib.pyplot as plt
+import os
 
 # Input: 6x6 data matrix (np.array), the position in the subplot, and a subplot title
 def plot_isoLines(dataset, ax, levels, title):
@@ -57,9 +55,9 @@ def plot_PCA_loadings(loadings, variances, title, levels=6):
 
     # Plot the isolines for each flow dataset
     #p.plot_isoLines(covariance, axs[0], 'Covariance Matrix')
-    plot_isoLines(loadings_matrix_pc1, axs[0], levels,  'PC1, explained variance: ' + str(round(variances[0]*100, 2)))
-    plot_isoLines(loadings_matrix_pc2, axs[1], levels,  'PC2, explained variance: ' + str(round(variances[1]*100, 2)))
-    plot_isoLines(loadings_matrix_pc3, axs[2], levels, 'PC3, explained variance: ' + str(round(variances[2]*100, 2)))
+    plot_isoLines(loadings_matrix_pc1, axs[0], levels,  'PC1, explained variance: ' + str(round(variances[0], 2)))
+    plot_isoLines(loadings_matrix_pc2, axs[1], levels,  'PC2, explained variance: ' + str(round(variances[1], 2)))
+    plot_isoLines(loadings_matrix_pc3, axs[2], levels, 'PC3, explained variance: ' + str(round(variances[2], 2)))
     #p.plot_isoLines(covariance, axs[4], 'Covariance matrix')
 
     plt.subplots_adjust(hspace=0.4, wspace=0.4)
@@ -67,4 +65,18 @@ def plot_PCA_loadings(loadings, variances, title, levels=6):
     #plt.title('Isolines of Flow Data')
     plt.tight_layout()
 
-    plt.show()
+    
+
+    # Specify the directory path and file name
+    directory = '~/env/imgs/'
+    filename = 'img' + ' ' + title + '.png'
+
+    # Expand the home directory path
+    expanded_directory = os.path.expanduser(directory)
+
+    # Create the directory if it does not exist
+    os.makedirs(expanded_directory, exist_ok=True)
+    plt.savefig(os.path.join(expanded_directory, filename))
+
+    plt.close()
+    #plt.show()
