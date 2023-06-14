@@ -10,7 +10,7 @@ def main(data_matrix, title, noise_level):
 
     # Add gaussian noise
     data_matrix = ns.add_gaussian_noise(data_matrix, 0, noise_level)
-    #data_matrix = c.center_matrix(data_matrix)
+    data_matrix = c.center_matrix(data_matrix)
 
     # Compute eofs and varimax rotated eofs
     cov_pcs, cov_eofs, rot_cov_eofs, cov_exp_var, rot_cov_exp_var = xeofs.compute_pca(data_matrix)
