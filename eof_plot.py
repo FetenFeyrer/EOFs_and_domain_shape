@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 def plot(eofs, rot_eofs, title):
     #proj = EqualEarth(central_longitude=180)
     #proj = PlateCarree(central_longitude=180)
-    proj = Mercator(central_longitude=180)
+    proj = EqualEarth(central_longitude=180)
 
     kwargs = {
         'cmap' : 'RdBu', 'vmin' : -.05, 'vmax': .05, 'transform': PlateCarree()

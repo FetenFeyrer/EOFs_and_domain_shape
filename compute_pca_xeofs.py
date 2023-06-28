@@ -1,5 +1,5 @@
 import numpy as np
-from xeofs.xarray import EOF
+from xeofs.models import EOF
 import varimax_xeofs as rot
 import xarray as xr
 # input: a data set (n x 36(=p)), (number of components computed))
@@ -9,7 +9,7 @@ def compute_pca(data, n_components=6, correlation_mode=False, custom_weights=Non
     
 
     
-    model = EOF(data, norm=False, dim=['time'], weights=custom_weights)
+    model = EOF(data, n_modes=n_components, norm=True)
     model.solve()
     
     #pca.fit(data)

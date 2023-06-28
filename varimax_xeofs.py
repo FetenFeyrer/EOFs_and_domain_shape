@@ -1,4 +1,4 @@
-from xeofs.xarray import Rotator
+from xeofs.models import Rotator
 import numpy as np
 
 
