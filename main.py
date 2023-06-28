@@ -1,147 +1,114 @@
 
-import plot_pc as pup
-import reflect_by_x as refl
-import add_noise as ns
-import center_matrix as c
 import compute_pca_xeofs as xeofs
+import xarray as xr
+import eof_plot as plt
 import numpy as np
 
-def main(data_matrix, title, noise_level):
+import compute_adj_matrix as adj
+import compute_pca_manual as eof_man
 
-    # Add gaussian noise
-    data_matrix = ns.add_gaussian_noise(data_matrix, 0, noise_level)
-    data_matrix = c.center_matrix(data_matrix)
+
+def main(data, title):
+
+    minimum_std_dev = 1e-5
+    valid_x = data.stack(x=['lat', 'lon']).std('time') > minimum_std_dev
+    data = data.stack(x=['lat', 'lon']).sel(x=valid_x).unstack()
+    
+    #weights = adj.compute_adj_matrix(data)
+    #print(weights)
+    
+    time, lat, lon = data.shape
+
+    window = np.outer(np.hanning(lat), np.hanning(lon))
+
+    data = data * window
 
     # Compute eofs and varimax rotated eofs
-    cov_pcs, cov_eofs, rot_cov_eofs, cov_exp_var, rot_cov_exp_var = xeofs.compute_pca(data_matrix)
-    cor_pcs, cor_eofs, rot_cor_eofs, cor_exp_var, rot_cor_exp_var = xeofs.compute_pca(data_matrix, correlation_mode=True)
+    cov_pcs, cov_eofs, rot_cov_eofs, cov_exp_var, rot_cov_exp_var = xeofs.compute_pca(data, custom_weights='coslat')
+    #
+    #cov_eofs, rot_cov_eofs, x = eof_man.compute_pca(data)
+    plt.plot(cov_eofs, rot_cov_eofs, title)
 
-
-    ##### PLOT #####
-    pup.plot_PCA_loadings(cov_eofs, cov_exp_var, 'Covariance PCA ' + str(title) + ' noise-level: ' + str(noise_level))
-    pup.plot_PCA_loadings(rot_cov_eofs, rot_cov_exp_var, 'Covariance rotated PCA ' + str(title) + ' noise-level: ' + str(noise_level), 20)
-    pup.plot_PCA_loadings(cor_eofs, cor_exp_var, 'Correlation PCA ' + str(title) + ' noise-level: ' + str(noise_level), 20)
-    pup.plot_PCA_loadings(rot_cor_eofs, rot_cor_exp_var, 'Correlation rotated PCA ' + str(title) + ' noise-level: ' + str(noise_level), 20)
 
 
 if __name__== '__main__':
-    # Meridional Flow sample data
-    sample_inverse_MeridionalFlow = np.array([1032, 1028, 1024, 1020, 1016, 1012,
-                                            1032, 1028, 1024, 1020, 1016, 1012,
-                                            1032, 1028, 1024, 1020, 1016, 1012,
-                                            1032, 1028, 1024, 1020, 1016, 1012,
-                                            1032, 1028, 1024, 1020, 1016, 1012,
-                                            1032, 1028, 1024, 1020, 1016, 1012])
+    data = xr.tutorial.open_dataset('ersstv5')['sst']
 
-    sample_direct_MeridionalFlow = refl.reflect_by_x(sample_inverse_MeridionalFlow, 1012)
-    
-    # Zonal flow sample data
-    sample_direct_ZonalFlow = np.array([1012,1012,1012,1012,1012,1012,
-                                        1016,1016,1016,1016,1016,1016,
-                                        1020,1020,1020,1020,1020,1020,
-                                        1024,1024,1024,1024,1024,1024,
-                                        1028,1028,1028,1028,1028,1028,
-                                        1032,1032,1032,1032,1032,1032])
-    
-    
-    sample_inverse_ZonalFlow = refl.reflect_by_x(sample_direct_ZonalFlow, 1012)
+    # Define the latitude and longitude range for the Pacific region
+    lat_range = slice(-70, 70)  # Specify the desired latitude range (-30 to 30 degrees)
+    lon_range = slice(100, 300)  # Specify the desired longitude range (120 to 280 degrees)
 
-    sample_inverse_ZonalFlow_flip = np.array([1032,1032,1032,1032,1032,1032,
-                                        1028,1028,1028,1028,1028,1028,
-                                        1024,1024,1024,1024,1024,1024,
-                                        1020,1020,1020,1020,1020,1020,
-                                        1016,1016,1016,1016,1016,1016,
-                                        1012,1012,1012,1012,1012,1012])
-    
-    
-    sample_direct_ZonalFlow_flip = refl.reflect_by_x(sample_inverse_ZonalFlow_flip, 1012)
+    # Crop the dataset to the specified region
+    #data = data.sel(lat=lat_range, lon=lon_range)
 
-    # Cyclonic flow sample data
-    sample_inverse_CyclonicFlow = np.array([1016, 1020, 1024, 1024, 1020, 1016,
-                                    1020, 1024, 1028, 1028, 1024, 1020,
-                                    1024, 1028, 1032, 1032, 1028, 1024,
-                                    1024, 1028, 1032, 1032, 1028, 1024,
-                                    1020, 1024, 1028, 1028, 1024, 1020,
-                                    1016, 1020, 1024, 1024, 1020, 1016])
-    
-    sample_direct_CyclonicFlow = refl.reflect_by_x(sample_inverse_CyclonicFlow, 1012)
+    # Crop the dataset to the specified window
+    data_pacific = data.where(
+        (data.lat >= lat_range.start) & (data.lat <= lat_range.stop) &
+        (data.lon >= lon_range.start) & (data.lon <= lon_range.stop),
+        drop=True
+    )
 
-    sample_direct_CyclonicFlow_flip = np.array([1032, 1028, 1024, 1024, 1028, 1032,
-                                                1028, 1024, 1020, 1020, 1024, 1028,
-                                                1024, 1020, 1016, 1016, 1020, 1024,
-                                                1024, 1020, 1016, 1016, 1020, 1024,
-                                                1028, 1024, 1020, 1020, 1024, 1028,
-                                                1032, 1028, 1024, 1024, 1028, 1032])
-    
+    # Define the latitude and longitude range for the Pacific region
+    lat_range = slice(-70, -30)  # Specify the desired latitude range (-30 to 30 degrees)
+    lon_range = slice(120, 280)  # Specify the desired longitude range (120 to 280 degrees)
 
-    sample_inverse_CyclonicFlow_flip = refl.reflect_by_x(sample_direct_CyclonicFlow_flip, 1012)
-   
-
-   
-
-    # building the input data matrix for the artificial flow behaviour in S-Mode
-    # A = meridional, B = inverse meridional, C = zonal, D = inverse Zonal, E = cyclonic, F = inverse cyclonic
-    # sequence composition: AAAAAA BBBBBB CCCCCC DDDDDD EEEEEE FFFFFF
-    
-    
-    ####### PLASMODE 1 ########
-
-    AAAAAA = np.tile(sample_direct_MeridionalFlow, (6,1))
-    BBBBBB = np.tile(sample_inverse_MeridionalFlow, (6,1))
-    CCCCCC = np.tile(sample_direct_ZonalFlow, (6,1))
-    DDDDDD = np.tile(sample_inverse_ZonalFlow, (6,1))
-    
-    EEEEEE = np.tile(sample_direct_CyclonicFlow, (6,1))
-    FFFFFF = np.tile(sample_inverse_CyclonicFlow, (6,1))
-    
-  
-    input_matrix_mode1 = np.vstack((AAAAAA,BBBBBB,CCCCCC,DDDDDD,EEEEEE,FFFFFF))
-
-    
-    ####### PLASMODE 2 ########
-    
-    GGGGGG = np.tile(sample_direct_ZonalFlow_flip, (6,1))
-    HHHHHH = np.tile(sample_inverse_ZonalFlow_flip, (6,1))
-    KKKKKK = np.tile(sample_direct_CyclonicFlow_flip, (6,1))
-    LLLLLL = np.tile(sample_inverse_CyclonicFlow_flip, (6,1))
+    data_pacific_top = data.where(
+        (data.lat >= lat_range.start) & (data.lat <= lat_range.stop) &
+        (data.lon >= lon_range.start) & (data.lon <= lon_range.stop),
+        drop=True
+    )
+    #data_pacific_top = data_pacific_top.sortby('lat')
 
 
-    input_matrix_mode2 = np.vstack((GGGGGG,HHHHHH,AAAAAA,BBBBBB,KKKKKK,LLLLLL))
-   
-    ####### PLASMODE 4 ########
-    
-    GGGx10 = np.tile(sample_direct_ZonalFlow_flip, (10,1))
-    HHHx10 = np.tile(sample_inverse_ZonalFlow_flip, (10,1))
-    IIIx5 = np.tile(sample_direct_MeridionalFlow, (5,1))
-    JJJx5 = np.tile(sample_inverse_MeridionalFlow, (5,1))
-    KKKx3 = np.tile(sample_direct_CyclonicFlow_flip, (3,1))
-    LLLx3 = np.tile(sample_inverse_CyclonicFlow_flip, (3,1))
+    # Define the latitude and longitude range for the Pacific region
+    lat_range = slice(-30, 30)  # Specify the desired latitude range (-30 to 30 degrees)
+    lon_range = slice(120, 280)  # Specify the desired longitude range (120 to 280 degrees)
+
+    data_pacific_middle = data.where(
+        (data.lat >= lat_range.start) & (data.lat <= lat_range.stop) &
+        (data.lon >= lon_range.start) & (data.lon <= lon_range.stop),
+        drop=True
+    )
 
 
-    input_matrix_mode4 = np.vstack((GGGx10,HHHx10,IIIx5,JJJx5,KKKx3,LLLx3))
+    # Define the latitude and longitude range for the Pacific region
+    lat_range = slice(30, 70)  # Specify the desired latitude range (-30 to 30 degrees)
+    lon_range = slice(120, 280)  # Specify the desired longitude range (120 to 280 degrees)
 
-
-    ####### PLASMODE 5 #########
-
-    GGGx6 = np.tile(sample_direct_ZonalFlow_flip, (6,1))
-    HHHx6 = np.tile(sample_inverse_ZonalFlow_flip, (6,1))
-    IIIx3 = np.tile(sample_direct_MeridionalFlow, (3,1))
-    JJJx3 = np.tile(sample_inverse_MeridionalFlow, (3,1))
-    KKKx9 = np.tile(sample_direct_CyclonicFlow_flip, (9,1))
-    LLLx9 = np.tile(sample_inverse_CyclonicFlow_flip, (9,1))
-
-    input_matrix_mode5 = np.vstack((GGGx6, HHHx6, IIIx3, JJJx3, KKKx9, LLLx9))
+    data_pacific_bottom = data.where(
+        (data.lat >= lat_range.start) & (data.lat <= lat_range.stop) &
+        (data.lon >= lon_range.start) & (data.lon <= lon_range.stop),
+        drop=True
+    )
     
     
-    #plot_FlowTypes(sample_direct_MeridionalFlow, sample_direct_ZonalFlow, sample_direct_CyclonicFlow)
-    
-    
-    #for i in np.arange(0.093,0.100,0.001):
-        #i = i/10.0
-    main(input_matrix_mode1, 'Plasmode 1', 1)
-    main(input_matrix_mode2, 'Plasmode 2', 1)
-    main(input_matrix_mode4, 'Plasmode 4', 1)
-    main(input_matrix_mode5, 'Plasmode 5', 1)
+    # Define the latitude and longitude range for the Pacific region
+    lat_range = slice(-70, -30)  # Specify the desired latitude range (-30 to 30 degrees)
+    lon_range = slice(200, 260)  # Specify the desired longitude range (120 to 280 degrees)
+
+    data_pacific_ocean = data.where(
+        (data.lat >= lat_range.start) & (data.lat <= lat_range.stop) &
+        (data.lon >= lon_range.start) & (data.lon <= lon_range.stop),
+        drop=True
+    )
+
+    # Define the latitude and longitude range for the Pacific region
+    lat_range = slice(30, 70)  # Specify the desired latitude range (-30 to 30 degrees)
+    lon_range = slice(190, 280)  # Specify the desired longitude range (120 to 280 degrees)
+    data_pacific_midAmerica = data.where(
+        (data.lat >= lat_range.start) & (data.lat <= lat_range.stop) &
+        (data.lon >= lon_range.start) & (data.lon <= lon_range.stop),
+        drop=True
+    )
+
+    #main(data, 'Whole')
+    main(data_pacific, 'Pacific')
+    #print(data_pacific)
+    main(data_pacific_top, 'PacificTop')
+    main(data_pacific_ocean, 'PacificOcean')
+    main(data_pacific_midAmerica, 'PacificOcean')
+    main(data_pacific_middle, 'PacificMiddle')
+    main(data_pacific_bottom, 'PacificBottom')
     
     
     
