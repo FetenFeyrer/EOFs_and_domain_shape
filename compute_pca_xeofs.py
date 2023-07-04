@@ -9,7 +9,7 @@ def compute_pca(data, n_components=6, correlation_mode=False):
     
 
     
-    model = EOF(data, norm=True, dim=['time'])
+    model = EOF(data, norm=False, dim=['time'])
     model.solve()
     
    
