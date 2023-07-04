@@ -17,18 +17,13 @@ def compute_pca(data, n_components=6, correlation_mode=False, custom_weights=Non
     #pc_scores = pca.fit_transform(data)
     eofs = model.eofs()
 
-    #eofs = eofs.reshape()
+    eofs = eofs.reshape(39,80,6)
 
     
 
-    num_lat_points = int(np.sqrt(data.shape[1] / 2))
-    num_lon_points = int(2 * num_lat_points)
-
-    print(num_lon_points*num_lat_points)
-
-    lat = np.linspace(-90, 90, num_lat_points)
-    lon = np.linspace(-180, 180, num_lon_points)
-    mode = np.arange(1, n_components, dtype=np.int64)
+    lat = np.linspace(-90, 90, 39)
+    lon = np.linspace(-180, 180, 80)
+    mode = np.arange(1, n_components+1, dtype=np.int64)
 
     # Create the attributes for the new Xarray data array
     attributes = {
@@ -56,4 +51,4 @@ def compute_pca(data, n_components=6, correlation_mode=False, custom_weights=Non
     rot_eofs, rot_explained_variances = rot.varimax_xeofs(model)
     
     
-    return pcs, eofs, rot_eofs, explained_variances*100, rot_explained_variances*100
+    return pcs, eofs_xar, rot_eofs, explained_variances*100, rot_explained_variances*100

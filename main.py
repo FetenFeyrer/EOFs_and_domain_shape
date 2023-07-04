@@ -21,8 +21,8 @@ def main(data, title):
     cov_pcs, cov_eofs, rot_cov_eofs, cov_exp_var, rot_cov_exp_var = xeofs.compute_pca(data)
     print(cov_eofs.shape)
     #cov_eofs, rot_cov_eofs, x = eof_man.compute_pca(data)
-    #plt.plot(cov_eofs, rot_cov_eofs, title)
-    plt_np.plot_eofs(cov_eofs)
+    plt.plot(cov_eofs, cov_eofs, title)
+    #plt_np.plot_eofs(cov_eofs)
 
 
 
