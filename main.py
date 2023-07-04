@@ -32,9 +32,9 @@ if __name__== '__main__':
     random_cor_noise = cnd.rand_cor_noise()
 
     data_xr = construct_xarray(random_cor_noise, 39, 80)
-    print(data_xr)
+    #print(data_xr)
 
-    #main(random_cor_noise, ' random')
+    main(data_xr, ' random')
     
     
     
