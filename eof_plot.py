@@ -8,7 +8,7 @@ def plot(eofs, rot_eofs, title):
     proj = EqualEarth(central_longitude=180)
 
     kwargs = {
-        'cmap' : 'RdBu', 'vmin' : -1, 'vmax': 1, 'transform': PlateCarree()
+        'cmap' : 'RdBu', 'vmin' : -.05, 'vmax': .05, 'transform': PlateCarree()
     }
     fig = plt.figure(figsize=(10, 8))
     gs = GridSpec(3, 2)
@@ -19,10 +19,10 @@ def plot(eofs, rot_eofs, title):
     for i, (a0, a1) in enumerate(zip(ax0, ax1)):
         mode_range = i+1
         eofs.sel(mode=mode_range).plot(ax=a0, **kwargs)
-        a0.coastlines(color='1')
+        a0.coastlines(color='.5')
         rot_eofs.sel(mode=mode_range).plot(ax=a1, **kwargs)
-        a1.coastlines(color='1')
+        a1.coastlines(color='.5')
 
     plt.tight_layout()
-    plt.savefig('Unweighted eof-smode'+str(title)+'modes: '+str(mode_range-2)+'-'+str(mode_range)+'.jpg')
+    plt.savefig('EOFS correlated noise'+str(title)+'modes: '+str(mode_range-2)+'-'+str(mode_range)+'.jpg')
 
