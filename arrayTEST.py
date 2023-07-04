@@ -17,6 +17,6 @@ array = np.array([[1,2,3],
                  [43,44,45]])
 
 
-array = array.reshape(3,5,3)
+array = array.T.reshape(3,3,5)
 
-print(array)
+print(array[0,:,:])
