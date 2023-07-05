@@ -48,7 +48,7 @@ if __name__== '__main__':
 
     
 
-    list_exp_vars = []
+    '''list_exp_vars = []
     for i in range(1, 9):
         i /= 10.0
         random_corr_file = '/Users/julianfeyrer/Documents/GitHub/EOFs_and_domain_shape/datasets/random_correlated_noise_0d'+str(int(i*100))+'.txt'
@@ -61,7 +61,37 @@ if __name__== '__main__':
         list_exp_vars.append(exp_var)
         
     print(list_exp_vars)
-    plot_eigenvalue_sequences(list_exp_vars)
+    plot_eigenvalue_sequences(list_exp_vars)'''
+
+    
+
+
+    random_corr_file = '/Users/julianfeyrer/Documents/GitHub/EOFs_and_domain_shape/datasets/random_correlated_noise_0d10.txt'
+    random_cor_noise = np.loadtxt(random_corr_file)
+
+    #data = construct_xarray(random_cor_noise, 59, 120)
+    data = xr.tutorial.open_dataset('ersstv5')['sst']
+    #main(data, ' - EOFs Random correlated noise l=0')
+
+    print(data)
+
+    # Define the latitude and longitude range for the Pacific region
+    lat_range = slice(-42, 30)  # Specify the desired latitude range (-88.0 to -30.0 degrees)
+    lon_range = slice(120, 280)  # Specify the desired longitude range (120.0 to 280.0 degrees)
+
+    print(lat_range)
+    # Crop the dataset to the specified region
+    data = data.sel(lat=lat_range, lon=lon_range)
+
+    # Crop the dataset to the specified window
+    data_pacific = data.where(
+        (data.lat >= lat_range.start) & (data.lat <= lat_range.stop) &
+        (data.lon >= lon_range.start) & (data.lon <= lon_range.stop),
+        drop=True
+    )
+    print(data_pacific)
+
+
 
 
 
