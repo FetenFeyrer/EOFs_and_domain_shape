@@ -11,7 +11,7 @@ import xarray as xr
 
 def construct_xarray(data, lats, lons, title='data'):
     data = data.reshape(365,lats,lons)
-
+    
     n_time_samples = data.shape[0]
     
 
