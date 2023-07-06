@@ -1140,7 +1140,7 @@ def plot_deg_with_edges_old(Net, transform = ctp.crs.PlateCarree(), ctp_projecti
 
 def plot_map_lonlat(lon, lat, data, plot_type='scatter', central_longitude=0, central_latitude = 0,
             vmin=None, vmax=None, color='RdBu_r', bar=True,cmap = None,
-            ax=None, ctp_projection="Mollweide", label= None, grid_step=2.5, gridlines = True, earth = False,scale_const = 3, extend = 'both', norm = None,ticks=None):
+            ax=None, ctp_projection="Mollweide", label= None, grid_step=2.5, gridlines = True, earth = False,scale_const = 1, extend = 'both', norm = None,ticks=None):
     """Simple map plotting using xArray.
     
     Parameters:
