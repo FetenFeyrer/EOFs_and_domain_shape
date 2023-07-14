@@ -22,9 +22,9 @@ def plot(eofs, lon, lat, title):
     for i, (a0, a1) in enumerate(zip(ax0, ax1)):
         mode_range = i
         scatter0 = a0.scatter(lon, lat, c=eofs.isel(mode=mode_range), s=20, **kwargs)
-        a0.coastlines(color='.5')
+        #a0.coastlines(color='.5')
         scatter1 = a1.scatter(lon, lat, c=eofs.isel(mode=mode_range+3), s=20, **kwargs)
-        a1.coastlines(color='.5')
+        #a1.coastlines(color='.5')
 
         scatter_plots.append(scatter0)
         scatter_plots.append(scatter1)
@@ -32,9 +32,10 @@ def plot(eofs, lon, lat, title):
 
 
     cbar = fig.colorbar(scatter_plots[0], cax=ax_colorbar, shrink=0.6)  
-    cbar.set_label('timepoints')
+    cbar.set_label('colorbar')
 
     plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.95, wspace=0.1, hspace=0.1)
 
     #plt.tight_layout()
-    plt.savefig(str(title)+str(mode_range-2)+'-'+str(mode_range)+' SCATTER.jpg')
+    plt.savefig('/Users/julianfeyrer/Documents/GitHub/EOFs_and_domain_shape/scatterImgs/EOFs/'+str(title)+'.jpg')
+    plt.close()

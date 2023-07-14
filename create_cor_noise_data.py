@@ -5,7 +5,7 @@ import numpy as np
 from climnet.myutils import plot_map_lonlat
 import eof_plot_scatter as plt
 
-def rand_cor_noise(length_scale=1.5, is_uncorrelated=False):
+def rand_cor_noise(seed_offset, is_uncorrelated=False):
     grid = FeketeGrid(num_points=1500, num_iter=1000)
 
     lon, lat = grid.grid['lon'], grid.grid['lat']
@@ -13,8 +13,8 @@ def rand_cor_noise(length_scale=1.5, is_uncorrelated=False):
 
     cartesian_grid = spherical2cartesian(lon,lat)
 
-    ar_coeff = np.zeros(1500)
-    #ar_coeff = 0.9 * np.ones(760)
+    #ar_coeff = np.zeros(1500)
+    ar_coeff = 0.9 * np.ones(1500)
 
     #np.randint
     # half of the points random have high autocorrealtion
@@ -23,9 +23,9 @@ def rand_cor_noise(length_scale=1.5, is_uncorrelated=False):
     kernel = 1.0 * Matern(length_scale=0.2, nu=1.5, )
     cov = kernel(cartesian_grid)
     if(is_uncorrelated):
-        cov = np.eye(760)
+        cov = np.eye(1500)
 
-    np.random.seed(18360)
+    np.random.seed(18360-seed_offset)
     data = diag_var_process(ar_coeff, cov, n_time=365)
 
     sample_time_point = data[:6]
