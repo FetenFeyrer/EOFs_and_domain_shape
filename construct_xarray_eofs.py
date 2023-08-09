@@ -9,7 +9,7 @@ import xarray as xr
 
 
 def construct_xarray(data, lats, lons, title='data'):
-    data = data.T.reshape(6,lats,lons)
+    data = data.reshape(6,lats,lons)
 
     n_components = data.shape[0]
     

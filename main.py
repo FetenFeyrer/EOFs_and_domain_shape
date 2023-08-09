@@ -8,6 +8,7 @@ import create_cor_noise_data as cnd
 from construct_xarray_data import construct_xarray
 import construct_xarray_eofs as construct_np
 from plot_eigenvalues import plot_eigenvalue_sequences
+import xarray as xr
 
 from climnet.grid import spherical2cartesian
 
@@ -21,22 +22,22 @@ def main(data,title, lon=[], lat=[]):
     
 
     fixed_time_point = data.values[:6]
-    print(fixed_time_point.shape)
+    #print(fixed_time_point.shape)
     fixed_time_point = fixed_time_point.reshape(6,1500)
 
 
-    fixed_xr = construct_np.construct_xarray(fixed_time_point.T, 30, 50)
+    fixed_xr = construct_np.construct_xarray(fixed_time_point, 30, 50)
     #print(fixed_xr)
 
     # Compute eofs and varimax rotated eofs
     cov_pcs, cov_eofs, rot_cov_eofs, cov_exp_var, rot_cov_exp_var = xeofs.compute_pca(data)
     #print(fixed_xr)
-    #print(rot_cov_exp_var)
+    print(cov_eofs)
     
     #cov_eofs, rot_cov_eofs, x = eof_man.compute_pca(data)
     #plt.plot(fixed_xr, fixed_xr, title)
-    pt_plt.plot(fixed_xr, lon, lat, 'Sample fixed Point 1500 points:   '+str(title))
-    plt.plot(cov_eofs, lon, lat, 'EOFs 1-6 1500 points:     '+str(title))
+    pt_plt.plot(fixed_xr, lon, lat, 'Sample fixed Point 10000 points:   '+str(title), extent=[-180,0,-50,50])
+    plt.plot(cov_eofs, lon, lat, 'EOFs 1-6 10000 points:     '+str(title), extent=[-180,0,-50,50])
 
     #lon = data['lon']
     #lat = data['lat'].values
@@ -132,16 +133,67 @@ if __name__== '__main__':
     main(data, 'Scatter test', lon, lat)'''
 
 
+    ############################ MAIN LOOP #####################
     for i in range(31):
         random_cor_noise, lon, lat = cnd.rand_cor_noise(i, is_uncorrelated=False)
-        print(spherical2cartesian(lon, lat)[0].shape)
+        print(lon.shape)
         np.savetxt('/Users/julianfeyrer/Documents/GitHub/EOFs_and_domain_shape/datasets_scatter/random_correlated_noise_'+str(i)+'.txt', random_cor_noise)
         data = construct_xarray(random_cor_noise, 30, 50)
         main(data, 'Random correlated noise - Iteration: '+str(i), lon, lat)
         ##os.remove('/Users/julianfeyrer/Documents/GitHub/EOFs_and_domain_shape/feketegrid_1500_1000.p')'''
 
 
+    '''import compute_spherical_harmonics as sph
 
+
+    random_cor_noise, lon, lat = cnd.rand_cor_noise()
+    data = construct_xarray(random_cor_noise, 30, 50)
+
+    
+
+    cov_pcs, cov_eofs, rot_cov_eofs, cov_exp_var, rot_cov_exp_var = xeofs.compute_pca(data)
+
+    cov_eofs_swapped = cov_eofs.transpose('mode', 'lat', 'lon')
+
+    modified_eofs_T = sph.subtract_domain_shape(cov_eofs_swapped,6, 2, lon, lat)
+
+    modified_eofs = modified_eofs_T.transpose(0, 1, 2)
+    modified_eofs = modified_eofs[:6]
+
+    
+
+    lat_xr = np.linspace(90, -90, 30)
+    lon_xr = np.linspace(0, 360, 50)
+    mode = np.arange(1, 7, dtype=np.int64)
+
+    # Create the attributes for the new Xarray data array
+    attributes = {
+        'long_name': 'SPHERICAL TEST',
+        'description': 'Empirical Orthogonal Functions'
+    }
+
+    # Create the new Xarray data array
+    modified_eofs_xr = xr.DataArray(
+        modified_eofs,
+        dims=('mode', 'lat', 'lon'),
+        coords={'lat': lat_xr, 'lon': lon_xr, 'mode': mode},
+        attrs=attributes,
+    )
+    print(modified_eofs.shape)
+    plt.plot(cov_eofs, lon, lat, 'EOFs WITHOUT CORRECTION:')
+    plt.plot(modified_eofs_xr, lon, lat, 'EOFs SPHERICAL HARMONICS TEST:')
+
+    cov_eofs_T = cov_eofs.transpose('mode', 'lat', 'lon')
+    cov_eofs_T = cov_eofs_T[:6]
+
+
+    #print(cov_eofs_T.shape)
+
+    alg_cov_eofs, alg_mod_cov_eofs = xr.align(cov_eofs_T, modified_eofs_xr, join='exact')
+
+    corrected_eofs = alg_cov_eofs - alg_mod_cov_eofs
+    print(corrected_eofs)
+    plt.plot(corrected_eofs, lon, lat, 'CORRECTION')'''
 
 
 
