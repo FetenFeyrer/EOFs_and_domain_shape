@@ -18,11 +18,10 @@ def compute_pca(data, n_components=6, correlation_mode=False):
 
     explained_variances = model.explained_variance_ratio()
 
-    pcs = model.pcs()
-    #print(loadings.shape)
+
 
     #varimax rotation
-    #rot_eofs, rot_explained_variances = rot.varimax_xeofs(model)
+    rot_eofs, rot_explained_variances = rot.varimax_xeofs(model)
     
     
-    return pcs, eofs, eofs, explained_variances*100, explained_variances*100
+    return eofs, rot_eofs, explained_variances*100, rot_explained_variances*100
