@@ -7,11 +7,11 @@ import numpy as np
 
 def plot(eofs, rot_eofs, title, is_cropped=False):
     if is_cropped:
-        proj = Mercator()
+        proj = Mercator(central_longitude=180)
     else:
         proj = EqualEarth(central_longitude=180)
     kwargs = {
-        'levels': 30, 'cmap': 'RdBu', 'vmin': -0.03, 'vmax': 0.03, 'transform': PlateCarree()
+        'levels': 30, 'cmap': 'coolwarm', 'vmin': -0.04, 'vmax': 0.04, 'transform': PlateCarree()
     }
     fig = plt.figure(figsize=(12, 10))
     gs = GridSpec(3, 3, width_ratios=[1, 1, 0.05])
@@ -22,13 +22,20 @@ def plot(eofs, rot_eofs, title, is_cropped=False):
     # Iterate through the subplots and add content
     for i, (a0, a1) in enumerate(zip(ax0, ax1)):
         mode_range = i + 1
-        eofs.sel(mode=mode_range+1).plot(ax=a0, **kwargs, add_colorbar=False)
+        if is_cropped:
+            eofs.sel(mode=mode_range).plot.contourf(ax=a0, **kwargs, add_colorbar=False)
+        else:
+            eofs.sel(mode=mode_range+1).plot.contourf(ax=a0, **kwargs, add_colorbar=False)
         a0.coastlines(color='.5')
-        rot_eofs.sel(mode=mode_range+1).plot(ax=a1, **kwargs, add_colorbar=False)
+        if is_cropped:
+            rot_eofs.sel(mode=mode_range).plot.contourf(ax=a1, **kwargs, add_colorbar=False)
+        else:
+            rot_eofs.sel(mode=mode_range+1).plot.contourf(ax=a1, **kwargs, add_colorbar=False)
         a1.coastlines(color='.5')
 
         a0.set_title(f'EOF {mode_range+1}')
         a1.set_title(f'Rotated EOF {mode_range+1}')
+        
 
     # Create a shared colorbar
     norm = Normalize(vmin=kwargs['vmin'], vmax=kwargs['vmax'])

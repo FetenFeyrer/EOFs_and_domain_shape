@@ -26,14 +26,14 @@ class myEOF:
     # returns: eofs as xarray data-array of with dimensions 'lon', 'lat' and 'mode',
     # where 'lon' and 'lat are of same shape as data['lon'] and data['lat'] '
     # and 'mode' is the number of eofs calculated, default is the number of gridpoints in 'data' (#'lon'*#'lat')
-    def compute_eofs(self):
-        eofs, explained_variances = self._compute_eofs_internal()
+    def compute_eofs(self, rotate=False):
+        eofs, explained_variances = self._compute_eofs_internal(rotate=rotate)
         self.eofs = eofs
         self.explained_variances = explained_variances
         
 
     # compute eofs with the xeofs package
-    def _compute_eofs_internal(self):
+    def _compute_eofs_internal(self, rotate=False):
         data = self.data
 
         minimum_std_dev = 1e-5
@@ -46,19 +46,19 @@ class myEOF:
    
         eofs = model.eofs()
 
-        rot_var = Rotator(model, n_rot=50, power=1)
-
-        rot_eofs = rot_var.eofs()
+        if rotate:
+            rot_var = Rotator(model, n_rot=50, power=1)
+            eofs = rot_var.eofs()
     
 
         explained_variances = model.explained_variance_ratio()
 
         
-        return rot_eofs, explained_variances
+        return eofs, explained_variances
     
 
 
-    def plotEOFs(self, extent=None, is_subdomain=False, dot_size=20):
+    def plotEOFs(self, extent=None, is_subdomain=False, dot_size=20, is_rotated=False):
         """
         plots the first six eofs with a scatter plot
 
@@ -74,19 +74,25 @@ class myEOF:
             proj = PlateCarree()
             # set extent to the left side of the world map
             extent=[-180,0,-50,50]
-            title = str('ROTATED Pacific EOFs 1-6: '+self.title)
+            if is_rotated:
+                title = str('Rotated subdomain EOFs 1-6: '+self.title)
+            else:
+                title = str('Subdomain EOFs 1-6: '+self.title)
             # increase dot size
             dot_size=40
         else:
             # sphere projection
             proj = EqualEarth(central_longitude=180)
-            title = str('ROTATED EOFs 1-6: '+self.title)
+            if is_rotated:
+                title = str('Rotated EOFs 1-6: '+self.title)
+            else:
+                title = str('EOFs 1-6: '+self.title)
         #proj = Mercator(central_longitude=180)
         #proj = LambertAzimuthalEqualArea(central_longitude=90, central_latitude=50)
 
         
         kwargs = {
-            'cmap' : 'RdBu', 'vmin' : -0.04, 'vmax': 0.04, 'transform': PlateCarree()
+            'cmap' : 'coolwarm', 'vmin' : -0.04, 'vmax': 0.04, 'transform': PlateCarree()
         }
         ### intitlialize plot layout ###
         fig = plt.figure(figsize=(12, 10))
@@ -136,7 +142,7 @@ class myEOF:
         plt.close()
 
 
-    def plotEigenvalueErrorBars(explained_variances_list):
+    def plotEigenvalueErrorBars(explained_variances_list, N, title, ignore_first_ev=False):
         """
         Plots error bars for the first ten eigenvalues of different datasets.
 
@@ -158,7 +164,7 @@ class myEOF:
         mean_variances = np.mean(explained_variances_list, axis=0)
         std_dev_variances = np.std(explained_variances_list, axis=0)
 
-        estimated_std_error = mean_variances * ((2/624)**0.5)
+        estimated_std_error = mean_variances * ((2/N)**0.5)
 
         # Convert explained variances to percentages
         mean_variances_percent = mean_variances * 100
@@ -179,8 +185,13 @@ class myEOF:
 
         plt.grid(True)
 
-        plt.xlim(1,11)
-        plt.ylim(0,10)
+        plt.title(str(title))
+
+        if ignore_first_ev:
+            plt.xlim(1,11)
+            plt.ylim(0,10)
+            plt.title(str(title)+' - First eigenvalue not shown')
+        
 
         # Show the legend
         plt.legend()
@@ -188,11 +199,11 @@ class myEOF:
         # Set plot labels and title
         plt.xlabel('Mode')
         plt.ylabel('Eigenvalue')
-        plt.title('SST Eigenvalue Error Bars (First 10 Modes)')
+        
 
         # Show the plot
         plt.tight_layout()
-        plt.savefig(str('SSTErrorBars10k_xlim.jpg'))
+        plt.savefig(str(title)+'.jpg')
         plt.close()
 
 

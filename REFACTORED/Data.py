@@ -26,7 +26,7 @@ class CorrelatedNoise:
 
 
         
-    def create_correlated_noise_data(self, seed_offset=0, is_uncorrelated=False, is_autocorrelated=False, use_subdomain_pacific=False):
+    def create_correlated_noise_data(self, l=0.2, v=1.5, seed_offset=0, is_uncorrelated=False, is_autocorrelated=False, use_subdomain_pacific=False):
         """ 
         create a dataset with correlated noise
 
@@ -57,7 +57,7 @@ class CorrelatedNoise:
             self.num_points = 570
         else:
             lon, lat = grid.grid['lon'], grid.grid['lat']
-            print(lon.shape)
+
 
     
         # convert spherical coordinated to cartesian coordinates
@@ -70,7 +70,7 @@ class CorrelatedNoise:
             ar_coeff = np.zeros(self.num_points)
 
         # initialise the Kernel for inducing spatial correlation
-        kernel = 1.0 * Matern(length_scale=0.2, nu=1.5, )
+        kernel = 1.0 * Matern(length_scale=l, nu=v, )
         cov = kernel(cartesian_grid)
         # if the data should be completely uncorrelated, the cov-matrix is a identity matrix
         if(is_uncorrelated):
@@ -82,13 +82,13 @@ class CorrelatedNoise:
 
         ## set titles for different modes
         if(is_uncorrelated):
-            title= 'UNCORRELATED_NOISE(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+')'
+            title= 'Uncorrelated noise \n(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+')'
             np.savetxt(title+'.txt', data)
         elif(is_autocorrelated):
-            title= 'AUTO+SPATIAL-CORRELATED_NOISE(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+')'
+            title= 'Auto- and spatial correlated noise \n(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+', length-scale='+str(l)+', smoothness-scale='+str(v)+')'
             np.savetxt(title+'.txt', data)
         else:
-            title= 'SPATIAL-CORRELATED_NOISE(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+')'
+            title= 'Spatial correlated noise \n(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+', length-scale='+str(l)+', smoothness-scale='+str(v)+')'
             np.savetxt(title+'.txt', data)
 
 
