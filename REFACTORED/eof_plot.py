@@ -2,11 +2,14 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.colors import Normalize
 from matplotlib.colorbar import ColorbarBase
-from cartopy.crs import EqualEarth, PlateCarree
+from cartopy.crs import EqualEarth, PlateCarree, Mercator
 import numpy as np
 
-def plot(eofs, rot_eofs, title):
-    proj = EqualEarth(central_longitude=180)
+def plot(eofs, rot_eofs, title, is_cropped=False):
+    if is_cropped:
+        proj = Mercator()
+    else:
+        proj = EqualEarth(central_longitude=180)
     kwargs = {
         'levels': 30, 'cmap': 'RdBu', 'vmin': -0.03, 'vmax': 0.03, 'transform': PlateCarree()
     }
