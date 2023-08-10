@@ -1,5 +1,0 @@
-setup.py
-climnet.egg-info/PKG-INFO
-climnet.egg-info/SOURCES.txt
-climnet.egg-info/dependency_links.txt
-climnet.egg-info/top_level.txt
