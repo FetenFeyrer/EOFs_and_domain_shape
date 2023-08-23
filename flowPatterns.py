@@ -1,9 +1,15 @@
-from ComputeEOFs import *
-from Data import *
+from matplotlib.gridspec import GridSpec
+import matplotlib.pyplot as plt
+import numpy as np
+import string
 from xeofs.models import EOF
 from xeofs.models import Rotator
 from matplotlib.colors import TwoSlopeNorm
 import os
+import warnings
+
+# Suppress the specific UserWarning
+warnings.filterwarnings("ignore", message="This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.")
 
 
 directory_path = './artifical_flow_pattern_plots'
@@ -154,19 +160,22 @@ def plot_EOFs(eofs, exp_var, plotTitle):
     vmin = min(np.min(eofs),0)
     vmax = max(np.max(eofs),0)
 
+    # Get the lowercase letters from 'a' to 'z'
+    subplot_labels = list(string.ascii_lowercase)
+
     for i, ax in enumerate(axs):
         if i < num_samples:
             sample_data = eofs[i]
-            title = 'EOF ' + str(i+1) + ' - Explained variance= ~'+str(exp_var[i])
+            title = '('+str(subplot_labels[i])+') EOF ' + str(i+1) + ' - Explained variance= ~'+str(exp_var[i])+'%'
             if i > 2:
-                title = 'VARIMAX rotated EOF ' + str(i+1) + ' - Explained variance= ~'+str(exp_var[i])
+                title = '('+str(subplot_labels[i])+') REOF ' + str(i-2) + ' - Explained variance= ~'+str(exp_var[i])+'%'
             contour = plot_isoLines_eof(sample_data, ax, title, vmin, vmax)
             ax.set_aspect('equal')
             if i == 0:
                 contour_levels = contour.levels
             else:
                 contour.levels = contour_levels
-            ax.set_title(title)
+            ax.set_title(title, fontsize=16)
         else:
             ax.axis('off')
 
@@ -204,13 +213,21 @@ def compute_pca(data, n_components=3, correlation_mode=False):
 
     explained_variances = model.explained_variance()
    
-    
+    exp_var_tot = np.sum(explained_variances[:3])
+
+    for i in range(3):
+        explained_variances[i]/=exp_var_tot
 
     #varimax rotation
     rot_eofs, rot_explained_variances = varimax_xeofs(model)
+
+    rot_exp_var_tot = np.sum(rot_explained_variances[:3])
+
+    for i in range(3):
+        rot_explained_variances[i]/=rot_exp_var_tot
     
 
-    return eofs.T, rot_eofs.T, np.round(model.explained_variance_ratio()*100, 2), np.round(np.sqrt(rot_explained_variances), 2)
+    return eofs.T, rot_eofs.T, np.round(model.explained_variance_ratio()*100, 2), np.round((rot_explained_variances)*100, 2)
 
 
 
@@ -221,9 +238,9 @@ def varimax_xeofs(model):
 
     for i in range(3):
         #eofs[i]*=np.sqrt(eofs_exp_var[i])
-        rot_var._eofs[:,i]*=np.sqrt(np.sqrt(rot_var._explained_variance[i]))
+        rot_var._eofs[:,i]*=np.sqrt(rot_var._explained_variance[i])
 
-    return rot_var.eofs(), rot_var.explained_variance_ratio()
+    return rot_var.eofs(), np.sqrt(rot_var.explained_variance())
 
 
 
@@ -273,12 +290,12 @@ sample_inverse_CyclonicFlow = reflect_by_x(sample_direct_CyclonicFlow, 1012)
 ####### PLASMODE 1 ########
 # Plasmode 2 in Compagnucci and Richman (2007)
 
-AAAAAA = np.tile(sample_direct_MeridionalFlow, (6,1))
-BBBBBB = np.tile(sample_inverse_MeridionalFlow, (6,1))
-CCCCCC = np.tile(sample_direct_ZonalFlow, (6,1))
-DDDDDD = np.tile(sample_inverse_ZonalFlow, (6,1))
-EEEEEE = np.tile(sample_direct_CyclonicFlow, (6,1))
-FFFFFF = np.tile(sample_inverse_CyclonicFlow, (6,1))
+AAAAAA = np.tile(sample_direct_MeridionalFlow, (60,1))
+BBBBBB = np.tile(sample_inverse_MeridionalFlow, (60,1))
+CCCCCC = np.tile(sample_direct_ZonalFlow, (60,1))
+DDDDDD = np.tile(sample_inverse_ZonalFlow, (60,1))
+EEEEEE = np.tile(sample_direct_CyclonicFlow, (60,1))
+FFFFFF = np.tile(sample_inverse_CyclonicFlow, (60,1))
 
 
 input_matrix_plasmode1 = np.vstack((AAAAAA,BBBBBB,CCCCCC,DDDDDD,EEEEEE,FFFFFF))
@@ -288,27 +305,33 @@ input_matrix_plasmode1 = add_gaussian_noise(input_matrix_plasmode1, 0, 1)
 ####### PLASMODE 2 #########
 # Plasmode 7 in Compagnucci and Richman (2007)
 
-AAAx20 = np.tile(sample_direct_ZonalFlow, (20,1))
-CCCx5 = np.tile(sample_direct_MeridionalFlow, (5,1))
-DDDx5 = np.tile(sample_inverse_MeridionalFlow, (5,1))
-EEEx3 = np.tile(sample_direct_CyclonicFlow, (3,1))
-FFFx3 = np.tile(sample_inverse_CyclonicFlow, (3,1))
+AAAx20 = np.tile(sample_direct_ZonalFlow, (30,1))
+AAA_inverse = np.tile(sample_inverse_ZonalFlow, (30,1))
+CCCx5 = np.tile(sample_direct_MeridionalFlow, (120,1))
+DDDx5 = np.tile(sample_inverse_MeridionalFlow, (120,1))
+EEEx3 = np.tile(sample_direct_CyclonicFlow, (30,1))
+FFFx3 = np.tile(sample_inverse_CyclonicFlow, (30,1))
 
-input_matrix_plasmode2 = np.vstack((AAAx20, CCCx5, DDDx5, EEEx3, FFFx3))
+#alt_stack = np.vstack((sample_inverse_MeridionalFlow, sample_direct_MeridionalFlow))
+#alt_stack2 = np.tile(alt_stack, (240,1))
+
+input_matrix_plasmode2 = np.vstack((CCCx5, DDDx5, AAAx20, AAA_inverse, EEEx3, FFFx3))
 input_matrix_plasmode2 = add_gaussian_noise(input_matrix_plasmode2, 0, 1)
 
 
 
-titles = ['Direct zonal flow (A)','Inverse zonal flow (B)','Direct meridional flow (C)','Inverse meridional flow (D)','Direct cyclonic flow (E)','Inverse cyclonic flow (F)']
+titles = ['(a) Direct zonal flow','(b) Inverse zonal flow','(c) Direct meridional flow','(d) Inverse meridional flow','(e) Direct circular flow','(f) Inverse circular flow']
 plot_FlowTypes([sample_direct_ZonalFlow, sample_inverse_ZonalFlow, sample_direct_MeridionalFlow, sample_inverse_MeridionalFlow, sample_direct_CyclonicFlow, sample_inverse_CyclonicFlow],titles)
-
+print('Flow type plots done')
 eofs, rot_eofs, eofs_exp_var, rot_eofs_exp_var = compute_pca(input_matrix_plasmode1)
 
 
 plot_EOFs(np.vstack((eofs,rot_eofs)), np.hstack((eofs_exp_var, rot_eofs_exp_var)), 'EOFs_artificial_flow_patterns_plasmode1')
+print('Plots of plasmode 1 done.')
 #plot_EOFs(rot_eofs, rot_eofs_exp_var, 'Varimax_rotated_EOFs_artificial_flow_patterns')
 
 eofs, rot_eofs, eofs_exp_var, rot_eofs_exp_var = compute_pca(input_matrix_plasmode2)
 
 
 plot_EOFs(np.vstack((eofs,rot_eofs)), np.hstack((eofs_exp_var, rot_eofs_exp_var)), 'EOFs_artificial_flow_patterns_plasmode2')
+print('Plots of plasmode 2 done.')

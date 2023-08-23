@@ -54,7 +54,7 @@ class CorrelatedNoise:
             lon, lat = cutted_grid['lon'], cutted_grid['lat']
 
             ## TODO: remove hardcoding
-            self.num_points = 575
+            self.num_points = 570
         else:
             lon, lat = grid.grid['lon'], grid.grid['lat']
 
@@ -83,13 +83,13 @@ class CorrelatedNoise:
         ## set titles for different modes
         if(is_uncorrelated):
             title= 'Uncorrelated noise \n(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+')'
-            np.savetxt(title+'.txt', data)
+          
         elif(is_autocorrelated):
             title= 'Auto- and spatial correlated noise \n(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+', length-scale='+str(l)+', smoothness-scale='+str(v)+')'
-            np.savetxt(title+'.txt', data)
+         
         else:
             title= 'Spatial correlated noise \n(points: '+str(self.num_points)+', timepoints: '+str(self.num_timepoints)+', length-scale='+str(l)+', smoothness-scale='+str(v)+')'
-            np.savetxt(title+'.txt', data)
+        
 
 
         # convert data back to a xarray data-array for further processing
@@ -175,6 +175,17 @@ class CorrelatedNoise:
         dot_size: set the size of the plotted dots
         
         """
+
+        directory_path = './MIGRF_time_sample_plots/'
+
+        # Check if the directory already exists
+        if not os.path.exists(directory_path):
+            # Create the directory
+            os.makedirs(directory_path)
+            print(f"Directory '{directory_path}' created.")
+        else:
+            print(f"Directory '{directory_path}' already exists.")
+
         if (is_subdomain):
             proj = PlateCarree()
             extent=[-180,0,-50,50]
@@ -188,7 +199,7 @@ class CorrelatedNoise:
 
         
         kwargs = {
-            'cmap' : 'RdBu', 'vmin' : -3, 'vmax': 3, 'transform': PlateCarree()
+            'cmap' : 'coolwarm', 'vmin' : -3, 'vmax': 3, 'transform': PlateCarree()
         }
         fig = plt.figure(figsize=(12, 10))
         gs = GridSpec(3, 3, figure=fig, width_ratios=[1, 1, 0.05])
@@ -197,6 +208,9 @@ class CorrelatedNoise:
         ax_colorbar = fig.add_subplot(gs[:, 2]) 
 
         scatter_plots = []
+
+        # Get the lowercase letters from 'a' to 'z'
+        subplot_labels = list(string.ascii_lowercase)
 
         for i, (a0, a1) in enumerate(zip(ax0, ax1)):
 
@@ -214,8 +228,8 @@ class CorrelatedNoise:
             scatter_plots.append(scatter1)
 
             # Add titles to each subplot
-            a0.set_title(f'Time sample {mode_range + 1}', fontsize=14)
-            a1.set_title(f'Time sample {mode_range + 4}', fontsize=14)
+            a0.set_title('('+str(subplot_labels[i])+') '+f'Time sample {mode_range + 1}', fontsize=14)
+            a1.set_title('('+str(subplot_labels[i+3])+') '+f'Time sample {mode_range + 4}', fontsize=14)
 
         # Add a title for the whole plot
         fig.suptitle(title, fontsize=16)
@@ -223,11 +237,12 @@ class CorrelatedNoise:
 
 
         cbar = fig.colorbar(scatter_plots[0], cax=ax_colorbar, shrink=0.6)  
+        cbar.set_label('Anomaly')
 
         plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.95, wspace=0.1, hspace=0.1)
 
         plt.tight_layout()
-        plt.savefig(str(title)+'.jpg')
+        plt.savefig(f'{directory_path}{title}.jpg')
         plt.close()
     
 
