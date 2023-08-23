@@ -50,9 +50,7 @@ This repository contains code for computing and visualizing Empirical Orthogonal
     - `lat`: Latitudes of the grid.
     - `title`: Title for the dataset.
 
-- **Methods**:
-    - `create_data(self, n, l, v, show_plot)`: Generates a time series dataset with correlated noise on an isotropic random field. Adjust the parameters for varying dataset characteristics. Use `show_plot` to visualize the generated data.
-    - `normalize_data(self, data)`: Normalizes the provided dataset. Adjust the `data` parameter to input different datasets.
+
 
 ### Class: `myEOF` (from `ComputeEOFs.py`)
 
@@ -64,10 +62,6 @@ This repository contains code for computing and visualizing Empirical Orthogonal
     - `eofs`: EOFs computed from the data (initialized to `None`).
     - `explained_variances`: Variance explained by each EOF (initialized to `None`).
 
-- **Methods**:
-    - `compute_eofs(self, rotate=False)`: Computes the EOFs of the provided dataset. Use `rotate` parameter to determine if rotated EOFs should be computed.
-    - `plot_eofs(eofs, num_eofs, ax, title)`: Plots the computed EOFs. Adjust `num_eofs` to set the number of EOFs you want to compute and display.
-    - `plot_eigenvalues(eigenvalues, num_eofs, ax)`: Visualizes the eigenvalues corresponding to the EOFs. Adjust `num_eofs` to set the number of eigenvalues to display.
 ## References
 
 1. **Artificial Flow Patterns**: [Reference](https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.1574)

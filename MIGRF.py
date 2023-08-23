@@ -134,7 +134,7 @@ def plotEigenvalueSequencesAndErrorBars(length_scale=0.2, is_subdomain=False, is
     for i in range(31):
         dataset = CorrelatedNoise(1500, 10000)
 
-        dataset.create_correlated_noise_data(seed_offset=i, l=length_scale, use_subdomain_pacific=is_subdomain, is_uncorrelated=True)
+        dataset.create_correlated_noise_data(seed_offset=i, l=length_scale, use_subdomain_pacific=is_subdomain, is_uncorrelated=is_uncorrelated)
 
         eofs = myEOF(dataset.data, dataset.lon, dataset.lat, dataset.title)
 
