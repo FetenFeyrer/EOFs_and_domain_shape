@@ -3,14 +3,14 @@
 
 ## Overview
 
-This repository contains code for computing and visualizing Empirical Orthogonal Functions (EOFs) of various datasets. The datasets include artificial flow patterns, sea surface temperature (SST) data, and correlated noise on isotropic random fields.
+This repository contains code for computing and visualising Empirical Orthogonal Functions (EOFs) of various datasets. The datasets include artificial flow patterns, sea surface temperature (SST) data, and correlated noise on isotropic random fields.
 
 ## Repository Structure
 
 1. **flowPatterns.py**: Contains functions for plotting isolines and adding Gaussian noise to data. 
 2. **sst.py**: Focuses on handling and processing SST data. The data is subset into various regions of the Pacific for analysis.
 3. **ComputeEOFs.py**: Provides a class for computing EOFs using the `xeofs` package.
-4. **MIGRF.py**: Generates and analyzes datasets with correlated and uncorrelated noise. For each dataset, EOFs are computed and visualized.
+4. **MIGRF.py**: Generates and analyses datasets with correlated and uncorrelated noise. For each dataset, EOFs are computed and visualised.
 5. **Data.py**: Contains a class for creating a time series dataset with correlated noise on an isotropic random field using the climnet package.
 6. **main.py**: A driver script that runs `flowPatterns.py`, `sst.py`, and `MIGRF.py` in sequence, serving as a starting point to execute the entire EOF analysis workflow.
 
@@ -38,7 +38,7 @@ This repository contains code for computing and visualizing Empirical Orthogonal
    ```
 
 
-## Modifying the Code
+## main classes
 
 ### Class: `Data` (from `Data.py`)
 
@@ -59,8 +59,8 @@ This repository contains code for computing and visualizing Empirical Orthogonal
     - `lon`: Longitudes of the dataset.
     - `lat`: Latitudes of the dataset.
     - `title`: Title for the dataset.
-    - `eofs`: EOFs computed from the data (initialized to `None`).
-    - `explained_variances`: Variance explained by each EOF (initialized to `None`).
+    - `eofs`: EOFs computed from the data (initialised to `None`).
+    - `explained_variances`: Variance explained by each EOF (initialised to `None`).
 
 ## References
 
