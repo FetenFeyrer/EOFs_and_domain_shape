@@ -37,39 +37,37 @@ This repository contains code for computing and visualizing Empirical Orthogonal
    python main.py
    ```
 
+
 ## Modifying the Code
 
-- **Changing Data Regions in `sst.py`**: Modify the `lat_range` and `lon_range` variables to change the latitude and longitude range of the Pacific regions.
-  
-- **Adjusting Noise in `flowPatterns.py`**: To adjust the noise level, modify the `mean` and `std_dev` parameters in the `add_gaussian_noise()` function.
+### Class: `Data` (from `Data.py`)
 
-- **Analyzing Different Datasets in `MIGRF.py`**: Adjust parameters like `l` (length scale) and `v` (variance) in the `create_correlated_noise_data()` method for varying noise characteristics.
+- **Attributes**:
+    - `data`: The dataset to be created.
+    - `num_points`: Number of grid points.
+    - `num_timepoints`: Number of time points in the time series.
+    - `lon`: Longitudes of the grid.
+    - `lat`: Latitudes of the grid.
+    - `title`: Title for the dataset.
 
-- **Computing Rotated EOFs in `ComputeEOFs.py`**: Set the `rotate` parameter to `True` in the `compute_eofs()` method to compute rotated EOFs.
-
-
-- **flowPatterns.py**:
-    - `reflect_by_x(input_matrix, x)`: Reflects a data sample by a given value. Adjust `x` to change the reflection point.
-    - `add_gaussian_noise(matrix, mean, std_dev)`: Adds Gaussian noise to a matrix. Tweak `mean` and `std_dev` to adjust noise characteristics.
-    - `plot_isoLines(dataset, ax, title, vmin, vmax)`: Plots isolines for a dataset. Alter `vmin` and `vmax` to change colorbar scaling.
-
-- **sst.py**:
-    - `subset_sst_data(data, lat_range, lon_range)`: Subsets the SST data based on the provided latitude and longitude ranges. Adjust `lat_range` and `lon_range` as desired.
-    - `create_sst_anomaly(data)`: Computes the SST anomaly by subtracting the mean. Modify the data input as required.
-    - `plot_sst_data(data, ax, title)`: Plots the SST data on a map. Modify `title` to customize the plot title.
-
-- **ComputeEOFs.py**:
-    - `compute_eofs(data, num_eofs, rotate)`: Computes the EOFs for a given dataset. Adjust `num_eofs` to specify the number of EOFs and `rotate` to determine if rotated EOFs should be computed.
-    - `plot_eofs(eofs, num_eofs, ax, title)`: Plots the computed EOFs. Modify `num_eofs` to set the number of EOFs to display and `title` to customize the plot title.
-    - `plot_eigenvalues(eigenvalues, num_eofs, ax)`: Visualizes the eigenvalues corresponding to the EOFs. Adjust `num_eofs` to set the number of eigenvalues to display.
-
-- **MIGRF.py**:
-    - `create_correlated_noise_data(n, l, v, show_plot)`: Generates a dataset with correlated noise. Modify parameters like `l` (length scale) and `v` (variance) for varying noise characteristics. Adjust `show_plot` to visualize the generated data.
-    - `compute_and_plot_eofs(dataset, num_eofs, ax)`: Computes and plots the EOFs for a given dataset. Adjust `num_eofs` to specify the number of EOFs you want to compute and display.
-
-- **Data.py**:
-    - `create_data(self, n, l, v, show_plot)`: Generates a time series dataset with correlated noise on an isotropic random field. Modify parameters like `n` (number of data points), `l` (length scale), and `v` (variance) to adjust the dataset characteristics. Use `show_plot` to visualize the generated data.
+- **Methods**:
+    - `create_data(self, n, l, v, show_plot)`: Generates a time series dataset with correlated noise on an isotropic random field. Adjust the parameters for varying dataset characteristics. Use `show_plot` to visualize the generated data.
     - `normalize_data(self, data)`: Normalizes the provided dataset. Adjust the `data` parameter to input different datasets.
+
+### Class: `myEOF` (from `ComputeEOFs.py`)
+
+- **Attributes**:
+    - `data`: The input dataset (expected to be an xarray data-array).
+    - `lon`: Longitudes of the dataset.
+    - `lat`: Latitudes of the dataset.
+    - `title`: Title for the dataset.
+    - `eofs`: EOFs computed from the data (initialized to `None`).
+    - `explained_variances`: Variance explained by each EOF (initialized to `None`).
+
+- **Methods**:
+    - `compute_eofs(self, rotate=False)`: Computes the EOFs of the provided dataset. Use `rotate` parameter to determine if rotated EOFs should be computed.
+    - `plot_eofs(eofs, num_eofs, ax, title)`: Plots the computed EOFs. Adjust `num_eofs` to set the number of EOFs you want to compute and display.
+    - `plot_eigenvalues(eigenvalues, num_eofs, ax)`: Visualizes the eigenvalues corresponding to the EOFs. Adjust `num_eofs` to set the number of eigenvalues to display.
 ## References
 
 1. **Artificial Flow Patterns**: [Reference](https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.1574)
