@@ -27,7 +27,6 @@ This repository contains code for computing and visualizing Empirical Orthogonal
   - `cartopy`
   - `climnet` (may require additional setup)
   - `sklearn`
-  - Other dependencies as specified in the scripts.
 
 ### Running the Code
 
