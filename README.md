@@ -38,7 +38,7 @@ This repository contains code for computing and visualising Empirical Orthogonal
    ```
 
 
-## main classes
+## Code Structure
 
 ### Class: `Data` (from `Data.py`)
 
