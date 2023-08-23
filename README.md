@@ -48,14 +48,6 @@ This repository contains code for computing and visualizing Empirical Orthogonal
 
 - **Computing Rotated EOFs in `ComputeEOFs.py`**: Set the `rotate` parameter to `True` in the `compute_eofs()` method to compute rotated EOFs.
 
-## Contributing
-
-If you wish to contribute to this repository, please fork the repository and create a pull request with your proposed changes. Ensure that your code is well-commented and follows the structure and style of the existing code.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.
-
 ## References
 
 1. **Artificial Flow Patterns**: [Reference](https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.1574)
