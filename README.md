@@ -56,7 +56,8 @@ If you wish to contribute to this repository, please fork the repository and cre
 
 This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.
 
-## Acknowledgments
+## References
 
-- Special thanks to the developers of the `xeofs` and `climnet` packages for providing essential tools for EOF analysis.
-
+1. **Artificial Flow Patterns**: [Reference](https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.1574)
+2. **MIGRF Data Sets**: [Reference](https://journals.ametsoc.org/view/journals/clim/36/10/JCLI-D-22-0549.1.xml)
+3. **SST Data Sets**: [Reference](https://psl.noaa.gov/data/gridded/data.noaa.ersst.v5.html)
